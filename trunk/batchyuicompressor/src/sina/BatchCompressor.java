@@ -66,7 +66,7 @@ public class BatchCompressor {
 				if(len == jsOutputDirs.length){
 					for(int i=0;i<len;i++){
 						System.out.println("\n***************** start compress  js **************************\n");
-						compressAllJS(jsInputDirs[i], jsOutputDirs[i], false);
+						compressAllJS(jsInputDirs[i].trim(), jsOutputDirs[i].trim(), false);
 						System.out.println("\n****************** end compress  js ***************************\n");
 					}
 				}else{
@@ -82,7 +82,7 @@ public class BatchCompressor {
 				if(len == cssOutputDirs.length){
 					for(int i=0;i<len;i++){
 						System.out.println("\n***************** start compress  css **************************\n");
-						compressAllCSS(cssInputDirs[i], cssOutputDirs[i]);
+						compressAllCSS(cssInputDirs[i].trim(), cssOutputDirs[i].trim());
 						System.out.println("\n****************** end compress  css ***************************\n");
 					}
 				}else{
