@@ -60,15 +60,36 @@ public class BatchCompressor {
 					"\n-----------------------------------------------------------------------------\n");
 			
 			if (jsInputDir != null && jsOutputDir != null) {
-				System.out.println("\n***************** start compress  js **************************\n");
-				compressAllJS(jsInputDir, jsOutputDir, false);
-				System.out.println("\n****************** end compress  js ***************************\n");
+				String[] jsInputDirs = jsInputDir.split(";");
+				String[] jsOutputDirs = jsOutputDir.split(";");
+				int len = jsInputDirs.length;
+				if(len == jsOutputDirs.length){
+					for(int i=0;i<len;i++){
+						System.out.println("\n***************** start compress  js **************************\n");
+						compressAllJS(jsInputDirs[i], jsOutputDirs[i], false);
+						System.out.println("\n****************** end compress  js ***************************\n");
+					}
+				}else{
+					System.out.println("jsInputDir 和 jsOutputDir文件夹数量不匹配！请保持输入输出1:1对应比例");
+				}
+				
 			}
+			
 			if (cssInputDir != null && cssOutputDir != null) {
-				System.out.println("\n***************** start compress  css **************************\n");
-				compressAllCSS(cssInputDir, cssOutputDir);
-				System.out.println("\n****************** end compress  css ***************************\n");
+				String[] cssInputDirs = cssInputDir.split(";");
+				String[] cssOutputDirs = cssOutputDir.split(";");
+				int len = cssInputDirs.length;
+				if(len == cssOutputDirs.length){
+					for(int i=0;i<len;i++){
+						System.out.println("\n***************** start compress  css **************************\n");
+						compressAllCSS(cssInputDirs[i], cssOutputDirs[i]);
+						System.out.println("\n****************** end compress  css ***************************\n");
+					}
+				}else{
+					System.out.println("cssInputDir 和 cssOutputDir文件夹数量不匹配！请保持输入输出1:1对应比例");
+				}
 			}
+			
 		} else {
 			System.out.println("No compress.ini  exist, please check it!");
 		}
