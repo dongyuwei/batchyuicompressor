@@ -169,7 +169,7 @@ public class BatchCompressor {
 	 * @param outputFileName
 	 * @param munge
 	 */
-	private static void compressOneJS(String inputFileName,String outputFileName, boolean munge) throws EvaluatorException,
+	private static void compressOneJS(final String inputFileName,String outputFileName, boolean munge) throws EvaluatorException,
 			IOException {
 		Reader in = new InputStreamReader(new FileInputStream(inputFileName),"UTF-8");
 		JavaScriptCompressor compressor = new JavaScriptCompressor(in,
@@ -187,10 +187,9 @@ public class BatchCompressor {
 					public void error(String message, String sourceName,
 							int line, String lineSource, int lineOffset) {
 						if (line < 0) {
-							System.err.println("\n[ERROR] " + message);
+							throw new Error("\n[ERROR] " + message + " 出错文件是: " + inputFileName);
 						} else {
-							System.err.println("\n[ERROR] " + line + ':'
-									+ lineOffset + ':' + message);
+							throw new Error("\n[ERROR] 文件" + inputFileName + "第" + line + "行出错:" +  message);
 						}
 					}
 
