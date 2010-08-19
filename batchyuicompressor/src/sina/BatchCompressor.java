@@ -50,13 +50,20 @@ public class BatchCompressor {
 			String jsOutputDir = (String) prop.get("jsOutputDir");
 			String cssInputDir = (String) prop.get("cssInputDir");
 			String cssOutputDir = (String) prop.get("cssOutputDir");
-
+			String obfuscate = (String) prop.get("obfuscate");
+			boolean munge = false;
+			if(obfuscate != null){
+				if(obfuscate.trim().toLowerCase().equals("true")){
+					munge = true;
+				}
+			}
 			System.out.println(
 					"\n-----------------------------------------------------------------------------\n"
 					+ "jsInputDir: " + jsInputDir + "\n" 
 					+ "jsOutputDir: " + jsOutputDir + "\n" 
 					+ "cssInputDir: " + cssInputDir + "\n"
-					+ "cssOutputDir: " + cssOutputDir+ "\n" + 
+					+ "cssOutputDir: " + cssOutputDir+ "\n"
+					+ "obfuscate：" + munge + "\n" +
 					"\n-----------------------------------------------------------------------------\n");
 			
 			if (jsInputDir != null && jsOutputDir != null) {
@@ -66,7 +73,7 @@ public class BatchCompressor {
 				if(len == jsOutputDirs.length){
 					for(int i=0;i<len;i++){
 						System.out.println("\n***************** start compress  js **************************\n");
-						compressAllJS(jsInputDirs[i].trim(), jsOutputDirs[i].trim(), false);
+						compressAllJS(jsInputDirs[i].trim(), jsOutputDirs[i].trim(), munge);
 						System.out.println("\n****************** end compress  js ***************************\n");
 					}
 				}else{
