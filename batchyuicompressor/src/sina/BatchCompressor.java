@@ -112,8 +112,9 @@ public class BatchCompressor {
 	public static void compressAllJS(String inputDirPath, String outputDirPath,
 			boolean munge) throws EvaluatorException, IOException {
 		File folder = new File(inputDirPath);
-		recurseCompress(folder, inputDirPath, outputDirPath, munge, "js");
-
+		if(folder.exists()){
+			recurseCompress(folder, inputDirPath, outputDirPath, munge, "js");
+		}
 	}
 
 	/**
@@ -125,7 +126,9 @@ public class BatchCompressor {
 	public static void compressAllCSS(String inputDirPath, String outputDirPath)
 			throws EvaluatorException, IOException {
 		File folder = new File(inputDirPath);
-		recurseCompress(folder, inputDirPath, outputDirPath, false, "css");
+		if(folder.exists()){
+			recurseCompress(folder, inputDirPath, outputDirPath, false, "css");
+		}
 	}
 
 	/**
