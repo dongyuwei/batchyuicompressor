@@ -73,13 +73,11 @@ public class BatchCompressor {
 	 */
 	public static void compressAll(String inputDirPath, String outputDirPath,
 			boolean munge) throws EvaluatorException, IOException {
-		clearDirectory(new File(outputDirPath));
+		clearDirectory(inputDirPath,outputDirPath,new File(outputDirPath));
 
 		File folder = new File(inputDirPath);
 		if (folder.exists()) {
-			System.out.println("\n============== start copy file(not .js or .css)==================\n");
 			recurseCopy(folder, inputDirPath, outputDirPath);
-			System.out.println("\n=============== end copy file ===================================\n");
 			
 			System.out.println("\n***************** start compress   **************************\n");
 			recurseCompress(folder, inputDirPath, outputDirPath, munge);
@@ -265,7 +263,7 @@ public class BatchCompressor {
 	}
 
 	public static void copyFile(File in, File out) throws IOException {
-		System.out.println("    ---copy file---: " + in.getAbsolutePath());
+//		System.out.println("    ---copy file---: " + in.getAbsolutePath());
 		FileChannel inChannel = new FileInputStream(in).getChannel();
 		FileChannel outChannel = new FileOutputStream(out).getChannel();
 		try {
@@ -280,14 +278,18 @@ public class BatchCompressor {
 		}
 	}
 
-	static public boolean clearDirectory(File dir) {
+	static public boolean clearDirectory(String inputDirPath,String outputDirPath,File dir) {
 		if (dir.exists()) {
 			File[] files = dir.listFiles();
 			for (int i = 0; i < files.length; i++) {
 				if (files[i].isDirectory()) {
-					clearDirectory(files[i]);
+					clearDirectory(inputDirPath,outputDirPath,files[i]);
 				} else {
-					files[i].delete();
+					File file = new File(files[i].getAbsolutePath().replace(outputDirPath,inputDirPath));
+					if(file.exists()){//如果输入文件夹中对应的没有该文件，就保留之
+//						System.out.println("delete file:" + files[i].getAbsolutePath() + "\n ");
+						files[i].delete();
+					}
 				}
 			}
 		}
