@@ -227,7 +227,7 @@ public class BatchCompressor {
 	}
 
 	public static void copyFile(File in, File out) throws IOException {
-		System.out.println("    ---copy file---: " + in.getAbsolutePath());
+//		System.out.println("    ---copy file---: " + in.getAbsolutePath());
 		FileChannel inChannel = new FileInputStream(in).getChannel();
 		FileChannel outChannel = new FileOutputStream(out).getChannel();
 		try {
