@@ -130,8 +130,6 @@ public class BatchCompressor {
 						compressOneJS(inputFile, outputFile, munge);
 					} else if (target.getName().endsWith("css")) {
 						compressOneCSS(inputFile, outputFile);
-					}else{
-						copyFile(listOfFiles[i], target);
 					}
 				}
 				
@@ -229,7 +227,7 @@ public class BatchCompressor {
 	}
 
 	public static void copyFile(File in, File out) throws IOException {
-//		System.out.println("    ---copy file---: " + in.getAbsolutePath());
+		System.out.println("    ---copy file---: " + in.getAbsolutePath());
 		FileChannel inChannel = new FileInputStream(in).getChannel();
 		FileChannel outChannel = new FileOutputStream(out).getChannel();
 		try {
