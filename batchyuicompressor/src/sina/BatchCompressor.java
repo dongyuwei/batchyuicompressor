@@ -73,12 +73,8 @@ public class BatchCompressor {
 	 */
 	public static void compressAll(String inputDirPath, String outputDirPath,
 			boolean munge) throws EvaluatorException, IOException {
-		clearDirectory(inputDirPath,outputDirPath,new File(outputDirPath));
-
 		File folder = new File(inputDirPath);
 		if (folder.exists()) {
-			recurseCopy(folder, inputDirPath, outputDirPath);
-			
 			System.out.println("\n***************** start compress   **************************\n");
 			recurseCompress(folder, inputDirPath, outputDirPath, munge);
 			System.out.println("\n****************** end compress   ***************************\n");
@@ -106,31 +102,43 @@ public class BatchCompressor {
 				String inputFile = listOfFiles[i].getAbsolutePath();
 				String outputFile = inputFile.replace(inputDirPath,
 						outputDirPath);
-				File file = new File(outputFile);
-				File parent = new File(file.getAbsolutePath().replace(
-						file.getName(), ""));
+				File target = new File(outputFile);
+				if(!target.exists()){
+					File parent = new File(target.getAbsolutePath().replace(
+							target.getName(), ""));
+					
+					if (parent.canWrite()) {
+						parent.mkdirs();
+					} else {
+						throw new Error("\n[ERROR] " + " 没有目录写权限: "
+								+ parent.getAbsolutePath());
+					}
+
+					if (target.getName().endsWith(".js") || target.getName().endsWith(".css") ) {
+						target.createNewFile();
+					}
+
+					if (target.getName().endsWith("js")) {
+						compressOneJS(inputFile, outputFile, munge);
+					} else if (target.getName().endsWith("css")) {
+						compressOneCSS(inputFile, outputFile);
+					}else{
+						copyFile(listOfFiles[i], target);
+					}
+				}else{
+					if (target.getName().endsWith("js")) {
+						compressOneJS(inputFile, outputFile, munge);
+					} else if (target.getName().endsWith("css")) {
+						compressOneCSS(inputFile, outputFile);
+					}else{
+						copyFile(listOfFiles[i], target);
+					}
+				}
 				
-				if (parent.canWrite()) {
-					parent.mkdirs();
-				} else {
-					throw new Error("\n[ERROR] " + " 没有目录写权限: "
-							+ parent.getAbsolutePath());
-				}
-
-				if (file.getName().endsWith(".js") || file.getName().endsWith(".css") ) {
-					file.createNewFile();
-				}
-
-				if (file.getName().endsWith("js")) {
-					compressOneJS(inputFile, outputFile, munge);
-				} else if (file.getName().endsWith("css")) {
-					compressOneCSS(inputFile, outputFile);
-				}
 			} else if (listOfFiles[i].isDirectory()) {
-				File file = new File(listOfFiles[i].getAbsolutePath().replace(
-						inputDirPath, outputDirPath));
-				if (!file.exists()) {
-					file.mkdirs();// 递归创建目录，类似 "mkdir -p" shell 命令
+				File target = new File(listOfFiles[i].getAbsolutePath().replace(inputDirPath, outputDirPath));
+				if (!target.exists()) {
+					target.mkdirs();// 递归创建目录，类似 "mkdir -p" shell 命令
 				}
 				recurseCompress(listOfFiles[i], inputDirPath, outputDirPath,
 						munge);
@@ -138,48 +146,6 @@ public class BatchCompressor {
 		}
 	}
 	
-	/**
-	 * 复制不是js和css的文件
-	 * 
-	 * @param folder
-	 * @param inputDirPath
-	 * @param outputDirPath
-	 */
-	private static void recurseCopy(File folder, String inputDirPath,
-			String outputDirPath)
-			throws IOException {
-
-		File[] listOfFiles = folder.listFiles();
-		for (int i = 0; i < listOfFiles.length; i++) {
-			if (listOfFiles[i].isFile()) {
-				String inputFile = listOfFiles[i].getAbsolutePath();
-				String outputFile = inputFile.replace(inputDirPath,
-						outputDirPath);
-				File file = new File(outputFile);
-				File parent = new File(file.getAbsolutePath().replace(
-						file.getName(), ""));
-				
-				if (parent.canWrite()) {
-					parent.mkdirs();
-				} else {
-					throw new Error("\n[ERROR] " + " 没有目录写权限: "
-							+ parent.getAbsolutePath());
-				}
-
-				if( !file.getName().endsWith(".js") &&  !file.getName().endsWith(".css")) {// 其他文件直接复制过来
-					copyFile(new File(inputFile), file);
-				}
-
-			} else if (listOfFiles[i].isDirectory()) {
-				File file = new File(listOfFiles[i].getAbsolutePath().replace(
-						inputDirPath, outputDirPath));
-				if (!file.exists()) {
-					file.mkdirs();// 递归创建目录，类似 "mkdir -p" shell 命令
-				}
-				recurseCopy(listOfFiles[i], inputDirPath, outputDirPath);
-			}
-		}
-	}
 	/**
 	 * 压缩一个js
 	 * 
@@ -276,24 +242,6 @@ public class BatchCompressor {
 			if (outChannel != null)
 				outChannel.close();
 		}
-	}
-
-	static public boolean clearDirectory(String inputDirPath,String outputDirPath,File dir) {
-		if (dir.exists()) {
-			File[] files = dir.listFiles();
-			for (int i = 0; i < files.length; i++) {
-				if (files[i].isDirectory()) {
-					clearDirectory(inputDirPath,outputDirPath,files[i]);
-				} else {
-					File file = new File(files[i].getAbsolutePath().replace(outputDirPath,inputDirPath));
-					if(file.exists()){//如果输入文件夹中对应的没有该文件，就保留之
-//						System.out.println("delete file:" + files[i].getAbsolutePath() + "\n ");
-						files[i].delete();
-					}
-				}
-			}
-		}
-		return dir.delete();
 	}
 
 	private static void usage() {
